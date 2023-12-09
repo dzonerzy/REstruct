@@ -1,10 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Sidebar from "../components/Sidebar.astro";
+import Sidebar from "../components/Sidebar/Sidebar.astro";
+import Table from "../components/Table/Table.astro";
 ---
 
 <Layout title="Welcome to Astro.">
-  <Sidebar />
+  <!-- <Sidebar /> -->
+  <Table data={[]} />
 </Layout>
 
 <style></style>
