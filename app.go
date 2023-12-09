@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"restruct/pkg/processes"
+	"restruct/pkg/types"
 )
 
 // App struct
@@ -21,7 +23,12 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
+// GetProcesses returns a list of processes
+func (a *App) GetProcesses() types.Response {
+	procs, err := processes.GetProcesses()
+	if err != nil {
+		errStr := fmt.Errorf("error getting processes: %s", err.Error())
+		return types.Response{Error: errStr.Error()}
+	}
+	return types.Response{Data: procs}
 }
