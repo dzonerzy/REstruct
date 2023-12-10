@@ -1,25 +1,31 @@
 package processes
 
 import (
+	"fmt"
 	"syscall"
 	"unsafe"
 )
 
 var (
-	procEnumProcesses  *syscall.LazyProc
-	procOpenProcess    *syscall.LazyProc
-	procCloseHandle    *syscall.LazyProc
-	procGetModuleBase  *syscall.LazyProc
-	procIsWow64Process *syscall.LazyProc
+	procEnumProcesses       *syscall.LazyProc
+	procOpenProcess         *syscall.LazyProc
+	procCloseHandle         *syscall.LazyProc
+	procGetModuleBase       *syscall.LazyProc
+	procIsWow64Process      *syscall.LazyProc
+	procGetModuleFileNameEx *syscall.LazyProc
+	procSHGetFileInfoW      *syscall.LazyProc
 )
 
 func init() {
 	kernel32 := syscall.NewLazyDLL("kernel32.dll")
+	shell32 := syscall.NewLazyDLL("shell32.dll")
 	procEnumProcesses = kernel32.NewProc("K32EnumProcesses")
 	procOpenProcess = kernel32.NewProc("OpenProcess")
 	procCloseHandle = kernel32.NewProc("CloseHandle")
 	procGetModuleBase = kernel32.NewProc("K32GetModuleBaseNameW")
 	procIsWow64Process = kernel32.NewProc("IsWow64Process")
+	procGetModuleFileNameEx = kernel32.NewProc("K32GetModuleFileNameExW")
+	procSHGetFileInfoW = shell32.NewProc("SHGetFileInfoW")
 }
 
 // enumerate returns a list of process ids for all running processes.
@@ -96,6 +102,38 @@ func processinfo(pid uint32) (*Process, error) {
 	} else {
 		arch = ArchX86
 	}
+
+	// get module file name
+	var filename [1024]uint16
+	var filenameSize uint32 = uint32(len(filename))
+	ret, _, err = procGetModuleFileNameEx.Call(
+		process,
+		uintptr(0),
+		uintptr(unsafe.Pointer(&filename[0])),
+		uintptr(unsafe.Pointer(&filenameSize)),
+	)
+
+	if ret == 0 {
+		panic(err)
+		return nil, err
+	}
+
+	// file description
+	var info SHFILEINFOA
+	ret, _, err = procSHGetFileInfoW.Call(
+		uintptr(unsafe.Pointer(&filename[0])),
+		0,
+		uintptr(unsafe.Pointer(&info)),
+		uintptr(unsafe.Sizeof(info)),
+		uintptr(SHGFI_DISPLAYNAME),
+	)
+
+	if ret == 0 {
+		panic(err)
+		return nil, err
+	}
+
+	fmt.Println(syscall.UTF16ToString(info.szDisplayName[:]))
 
 	return &Process{
 		Pid:  int(pid),

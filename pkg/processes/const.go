@@ -15,4 +15,12 @@ const (
 	// INVALID_HANDLE_VALUE is a handle value that is used to indicate
 	// an invalid handle.
 	INVALID_HANDLE_VALUE = syscall.InvalidHandle
+	// SHGFI_TYPENAME is a flag for SHGetFileInfo that returns the
+	// type name.
+	SHGFI_TYPENAME = 0x000000400
+	// SHGFI_ICON is a flag for SHGetFileInfo that returns the icon.
+	SHGFI_ICON = 0x000000100
+	// SHGFI_DISPLAYNAME is a flag for SHGetFileInfo that returns the
+	// display name.
+	SHGFI_DISPLAYNAME = 0x000000200
 )
