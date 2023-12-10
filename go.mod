@@ -1,8 +1,6 @@
 module restruct
 
-go 1.21
-
-toolchain go1.21.5
+go 1.18
 
 require github.com/wailsapp/wails/v2 v2.7.0
 
