@@ -27,5 +27,5 @@ export default function useGo(
         binds.GetProcesses().then(setResp).catch(impossible)
     }
     
-    return {GetProcesses}
+    return {GetProcesses};
 }

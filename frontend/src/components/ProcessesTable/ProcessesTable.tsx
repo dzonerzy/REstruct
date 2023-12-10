@@ -2,15 +2,14 @@
 
 import { Table } from "flowbite-react";
 import { useEffect, useState } from "react";
-import type { GoApiErr, Process } from "../components.types";
 import useGo from "../../api/useGo";
+import type { GoApiErr, Process } from "../components.types";
 
 export default function ProcessesTable() {
   const [processes, setProcesses] = useState<Process[]>([]);
   const [error, setError] = useState<GoApiErr>("");
-
   const {GetProcesses} = useGo(setProcesses, setError);
-
+  
   useEffect(() => {
     GetProcesses();
   }, [])
@@ -23,7 +22,7 @@ export default function ProcessesTable() {
           <Table.HeadCell>Name</Table.HeadCell>
           <Table.HeadCell>Arch</Table.HeadCell>
         </Table.Head>
-        
+      
         <Table.Body className="divide-y">
         {!processes.length
           ? <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800 even:bg-opacity-50 dark:even:bg-opacity-50">

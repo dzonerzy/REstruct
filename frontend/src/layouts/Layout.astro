@@ -1,4 +1,7 @@
 ---
+import Sidebar from "../components/Sidebar/Sidebar.astro";
+import MainContent from "../components/MainContent/MainContent.astro";
+
 interface Props {
   title: string;
 }
@@ -17,10 +20,14 @@ const { title } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <slot />
+    <Sidebar />
+    <MainContent>
+      <slot />
+    </MainContent>
   </body>
 </html>
 <style is:global>
+  @import "@flaticon/flaticon-uicons/css/all/all.css";
   :root {
     --accent: 136, 58, 234;
     --accent-light: 224, 204, 250;
@@ -43,4 +50,8 @@ const { title } = Astro.props;
       Courier New,
       monospace;
   }
+  /* body {
+    display: flex;
+    flex-direction: row;
+  } */
 </style>
