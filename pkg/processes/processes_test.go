@@ -28,8 +28,6 @@ func TestGetProcesses(t *testing.T) {
 			t.Fatal("Invalid architecture")
 		}
 	}
+
 	t.Log("Found", len(procs), "processes")
-	for _, process := range procs {
-		t.Log(process.Pid, process.Name, process.Arch)
-	}
 }
