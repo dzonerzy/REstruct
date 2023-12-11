@@ -9,11 +9,11 @@ const (
 )
 
 type Process struct {
-	Description string       `json:"desc"`
-	Name        string       `json:"name"`
-	Icon        string       `json:"icon"`
-	Pid         int          `json:"pid"`
-	Arch        Architecture `json:"arch"`
+	Desc string       `json:"desc"`
+	Exe  string       `json:"name"`
+	Icon string       `json:"icon"`
+	Pid  int          `json:"pid"`
+	Arch Architecture `json:"arch"`
 }
 
 /*
