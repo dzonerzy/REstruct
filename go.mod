@@ -4,10 +4,7 @@ go 1.21
 
 toolchain go1.21.5
 
-require (
-	github.com/wailsapp/wails/v2 v2.7.0
-	golang.org/x/image v0.10.0
-)
+require github.com/wailsapp/wails/v2 v2.7.0
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
