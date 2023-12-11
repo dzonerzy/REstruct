@@ -78,7 +78,7 @@ export default function ProcessesTable() {
         <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
           <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400 ">
             <tr>
-              {["PID", "Name", "Exe", "Architecture", " "].map(item => (
+              {["PID", "Icon", "Name", "Exe", "Architecture", " "].map(item => (
                 <th scope="col" className="py-3 text-center" key={item}>
                   {item}
                 </th>
@@ -99,18 +99,18 @@ export default function ProcessesTable() {
                   {process.pid}
                 </th>
                 <td className="p-4 py-2">
-                  <div className="flex flex-row items-center gap-x-3">
+                  <div className="w-8">
                     <img src={process.icon} />
-                    <span className="w-full text-center">{process.desc}</span>
                   </div>
                 </td>
+                <td className="p-4 py-2">{process.desc}</td>
                 <td className="p-4 py-2 text-center">{process.name}</td>
                 <td className="p-4 py-2">
                   <div className="flex w-full items-center justify-center">
                     {process.arch === 1 ? <img src="/assets/bit32.svg" /> : <img src="/assets/bit64.svg" />}
                   </div>
                 </td>
-                <td className="p-4 py-2">
+                <td className="min-w-max p-4 py-2">
                   <div className="flex flex-row items-center gap-x-3">
                     <img src="/assets/play.svg" />
                     <span>Attach</span>
