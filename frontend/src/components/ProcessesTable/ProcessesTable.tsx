@@ -74,11 +74,11 @@ export default function ProcessesTable() {
         </div>
       </div>
 
-      <div className="relative w-max overflow-x-auto shadow-md sm:rounded-lg ">
-        <table className="text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
+      <div className="relative w-full overflow-x-auto shadow-md sm:rounded-lg ">
+        <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
           <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400 ">
             <tr>
-              {["PID", "Name", "Architecture", " "].map(item => (
+              {["PID", "Name", "Exe", "Architecture", " "].map(item => (
                 <th scope="col" className="py-3 text-center" key={item}>
                   {item}
                 </th>
@@ -98,6 +98,12 @@ export default function ProcessesTable() {
                 >
                   {process.pid}
                 </th>
+                <td className="p-4 py-2">
+                  <div className="flex flex-row items-center gap-x-3">
+                    <img src={process.icon} />
+                    <span>{process.desc}</span>
+                  </div>
+                </td>
                 <td className="p-4 py-2 text-center">{process.name}</td>
                 <td className="p-4 py-2">
                   <div className="flex w-full items-center justify-center">
