@@ -79,7 +79,7 @@ export default function ProcessesTable() {
           <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400 ">
             <tr>
               {["PID", "Icon", "Name", "Exe", "Architecture", " "].map(item => (
-                <th scope="col" className="py-3 text-center" key={item}>
+                <th scope="col" className={`px-4 py-3 ${item === "Name" ? "" : "text-center"}`} key={item}>
                   {item}
                 </th>
               ))}
@@ -111,7 +111,7 @@ export default function ProcessesTable() {
                   </div>
                 </td>
                 <td className="min-w-max p-4 py-2">
-                  <div className="flex flex-row items-center gap-x-3">
+                  <div className="flex w-max flex-row items-center gap-x-3">
                     <img src="/assets/play.svg" />
                     <span>Attach</span>
                   </div>
