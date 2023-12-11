@@ -1,12 +1,14 @@
 export type GoApiResponse = {
-    data: any;
-    error: string;
-}
-export type GoApiErr = string
+  data: any;
+  error: string;
+};
+export type GoApiErr = string;
 
 export type Architecture = 1 | 2;
 export type Process = {
-    name: string;
-    pid: number;
-    arch: Architecture;
-}
+  desc: string;
+  icon: string;
+  name: string;
+  pid: number;
+  arch: Architecture;
+};

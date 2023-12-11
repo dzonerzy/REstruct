@@ -9,7 +9,7 @@ const (
 )
 
 type Process struct {
-	Description string       `json:"description"`
+	Description string       `json:"desc"`
 	Name        string       `json:"name"`
 	Icon        string       `json:"icon"`
 	Pid         int          `json:"pid"`

@@ -348,7 +348,7 @@ func processinfo(pid uint32) (*Process, error) {
 			return nil, fmt.Errorf("png.Encode failed")
 		}
 
-		iconCache[exePath] = base64.StdEncoding.EncodeToString(b.Bytes())
+		iconCache[exePath] = fmt.Sprintf("data:image/png;base64,%s", base64.StdEncoding.EncodeToString(b.Bytes()))
 
 	}
 
