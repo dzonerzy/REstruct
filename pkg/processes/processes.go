@@ -30,6 +30,7 @@ var (
 	procCreateCompatibleDC      *syscall.LazyProc
 	procGetDIBits               *syscall.LazyProc
 	procDestroyIcon             *syscall.LazyProc
+	procTerminateProcess        *syscall.LazyProc
 )
 
 var iconCache = make(map[string]string)
@@ -57,6 +58,7 @@ func init() {
 	procCreateCompatibleDC = gdi32dll.NewProc("CreateCompatibleDC")
 	procGetDIBits = gdi32dll.NewProc("GetDIBits")
 	procDestroyIcon = user32dll.NewProc("DestroyIcon")
+	procTerminateProcess = kernel32.NewProc("TerminateProcess")
 }
 
 // enumerate returns a list of process ids for all running processes.
@@ -353,11 +355,11 @@ func processinfo(pid uint32) (*Process, error) {
 	}
 
 	return &Process{
-		Pid:         int(pid),
-		Name:        exeName,
-		Description: exeDesc,
-		Arch:        arch,
-		Icon:        iconCache[exePath],
+		Pid:  int(pid),
+		Exe:  exeName,
+		Desc: exeDesc,
+		Arch: arch,
+		Icon: iconCache[exePath],
 	}, nil
 }
 
@@ -377,4 +379,24 @@ func GetProcesses() ([]*Process, error) {
 	}
 
 	return processes, nil
+}
+
+func TerminateProcess(pid int) error {
+	proc, err := syscall.OpenProcess(PROCESS_ALL_ACCESS, false, uint32(pid))
+	if err != nil {
+		return err
+	}
+	defer syscall.CloseHandle(proc)
+	procTerminateProcess.Call(uintptr(proc), 0)
+	return nil
+}
+
+func AttachProcess(pid int) error {
+	proc, err := syscall.OpenProcess(PROCESS_ALL_ACCESS, false, uint32(pid))
+	if err != nil {
+		return err
+	}
+	AttachedProcessId = pid
+	AttachedProcessHandle = uintptr(proc)
+	return nil
 }

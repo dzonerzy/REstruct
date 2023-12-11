@@ -20,7 +20,7 @@ func TestGetProcesses(t *testing.T) {
 			t.Fatal("Invalid PID")
 		}
 
-		if process.Name == "" {
+		if process.Exe == "" {
 			t.Fatal("Invalid name")
 		}
 
