@@ -101,7 +101,7 @@ export default function ProcessesTable() {
                 <td className="p-4 py-2">
                   <div className="flex flex-row items-center gap-x-3">
                     <img src={process.icon} />
-                    <span>{process.desc}</span>
+                    <span className="w-full text-center">{process.desc}</span>
                   </div>
                 </td>
                 <td className="p-4 py-2 text-center">{process.name}</td>
