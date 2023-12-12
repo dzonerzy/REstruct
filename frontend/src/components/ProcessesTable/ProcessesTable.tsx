@@ -2,22 +2,44 @@
 
 import { useEffect, useState } from "react";
 import useGo from "../../api/useGo";
-import type { GoApiErr, Process } from "../components.types";
+import ModalThemed from "../Wrappers/ModalThemed";
+import TooltipThemed from "../Wrappers/TooltipThemed";
+import type { GoApiErr, GoApiResponse, Process } from "../components.types";
+import ModalGuard from "../Wrappers/ModalThemed";
 
 export default function ProcessesTable() {
   const [processes, setProcesses] = useState<Process[]>([]);
-  const [error, setError] = useState<GoApiErr>("");
+  const [error, setError] = useState<GoApiErr>(null);
   const [loading, setLoading] = useState(true);
+  const [attachedPid, setAttachedPid] = useState<number>(-1);
+  const [selectedPid, setSelectedPid] = useState<number>(-1);
+  const [modalText, setModalText] = useState("");
+  const [openModal, setOpenModal] = useState(false);
 
   const { GetProcesses } = useGo(setProcesses, setError, setLoading);
+  const { TerminateProcess } = useGo(
+    () => {},
+    err => {
+      if (!err) {
+        GetProcesses();
+      }
+      setError(err);
+    },
+    setLoading
+  );
 
   useEffect(() => {
     GetProcesses();
   }, []);
 
+  const onConfirm = () => {
+    TerminateProcess(selectedPid);
+    setOpenModal(false);
+  };
+
   if (loading) {
     return (
-      <div className="absolute h-full w-full" role="status">
+      <div className="flex h-full w-full items-center justify-center" role="status">
         <svg
           aria-hidden="true"
           className="h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
@@ -43,6 +65,7 @@ export default function ProcessesTable() {
     <h1 className="bg-red-600">{error}</h1>
   ) : (
     <>
+      <ModalGuard {...{ text: modalText, openModal, setOpenModal, onConfirm }} />
       <div className="pb-4">
         <label htmlFor="table-search" className="sr-only">
           Search
@@ -112,8 +135,21 @@ export default function ProcessesTable() {
                 </td>
                 <td className="min-w-max p-4 py-2">
                   <div className="flex w-max flex-row items-center gap-x-3">
-                    <img src="/assets/play.svg" />
-                    <span>Attach</span>
+                    {attachedPid === -1 ? (
+                      <i className="fi fi-br-play-circle cursor-pointer text-xl text-green-600 hover:text-green-700"></i>
+                    ) : (
+                      <i className="fi fi-br-stop-circle cursor-pointer text-xl text-red-600 hover:text-red-700"></i>
+                    )}
+                    <TooltipThemed content="Kill Process">
+                      <i
+                        className="fi fi-sr-trash cursor-pointer text-xl text-amber-600 hover:text-amber-700"
+                        onClick={() => {
+                          setSelectedPid(process.pid);
+                          setModalText(`Are you sure you want to kill pid ${process.pid}?\n(${process.name})`);
+                          setOpenModal(true);
+                        }}
+                      ></i>
+                    </TooltipThemed>
                   </div>
                 </td>
               </tr>
