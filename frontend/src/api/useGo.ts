@@ -35,5 +35,14 @@ export default function useGo(
       .finally(setLoadingFalse);
   };
 
-  return { GetProcesses };
+  /** Kill process running on the machine */
+  const TerminateProcess = (pid: number) => {
+    setLoading(true);
+    (binds.TerminateProcess(pid) as Promise<GoApiResponse<number>>)
+      .then(setResp)
+      .catch(impossible)
+      .finally(setLoadingFalse);
+  };
+
+  return { GetProcesses, TerminateProcess };
 }
