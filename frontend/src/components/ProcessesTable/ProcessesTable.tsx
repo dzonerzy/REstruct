@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import useGo from "../../api/useGo";
-import ModalThemed from "../Wrappers/ModalThemed";
-import TooltipThemed from "../Wrappers/TooltipThemed";
-import type { GoApiErr, GoApiResponse, Process } from "../components.types";
 import ModalGuard from "../Wrappers/ModalThemed";
+import TooltipThemed from "../Wrappers/TooltipThemed";
+import type { GoApiErr, Process } from "../components.types";
 
 export default function ProcessesTable() {
   const [processes, setProcesses] = useState<Process[]>([]);
