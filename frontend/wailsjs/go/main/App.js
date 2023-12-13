@@ -5,3 +5,7 @@
 export function GetProcesses() {
   return window['go']['main']['App']['GetProcesses']();
 }
+
+export function TerminateProcess(arg1) {
+  return window['go']['main']['App']['TerminateProcess'](arg1);
+}

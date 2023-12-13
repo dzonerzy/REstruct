@@ -3,3 +3,5 @@
 import {types} from '../models';
 
 export function GetProcesses():Promise<types.Response>;
+
+export function TerminateProcess(arg1:number):Promise<types.Response>;
