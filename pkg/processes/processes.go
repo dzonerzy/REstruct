@@ -341,7 +341,8 @@ func processinfo(pid uint32) (*Process, error) {
 
 		exeIcon, err := processicon(filename[:filenameSize])
 		if err != nil {
-			panic(err)
+			return nil, fmt.Errorf("processicon failed")
+			// panic(err)
 		}
 
 		var b bytes.Buffer
