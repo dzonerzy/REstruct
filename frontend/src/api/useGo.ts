@@ -1,4 +1,5 @@
-import type { GoApiErr, GoApiResponse, Process } from "../components/components.types";
+import { GoApiErr, GoApiResponse, Process } from "./useGo.types";
+import { GoBinds } from "./useGo.types";
 
 /** Custom hook to wrap the golang bindings for react states logic */
 export default function useGo(
@@ -10,7 +11,7 @@ export default function useGo(
   setLoading: React.Dispatch<React.SetStateAction<boolean>> = () => {}
 ) {
   //@ts-ignore
-  const binds = window.go.main.App;
+  const binds: GoBinds = window.go.main.App;
   const impossible = (err: any) => {
     console.error("This should be impossible, value received: ", err);
   };
@@ -21,7 +22,7 @@ export default function useGo(
    *
    * (following the `{data: interface{}, error: string}` convention)
    */
-  const setResp = ({ data, error }: GoApiResponse<any>) => {
+  const setResp = <T>({ data, error }: GoApiResponse<T>) => {
     setData(data);
     setError(error);
   };
@@ -29,8 +30,9 @@ export default function useGo(
   /** Gets processes running on the machine */
   const GetProcesses = () => {
     setLoading(true);
-    (binds.GetProcesses() as Promise<GoApiResponse<Process[]>>)
-      .then(setResp)
+    binds
+      .GetProcesses()
+      .then(setResp<Process[]>)
       .catch(impossible)
       .finally(setLoadingFalse);
   };
@@ -38,8 +40,9 @@ export default function useGo(
   /** Kill process running on the machine */
   const TerminateProcess = (pid: number) => {
     setLoading(true);
-    (binds.TerminateProcess(pid) as Promise<GoApiResponse<number>>)
-      .then(setResp)
+    binds
+      .TerminateProcess(pid)
+      .then(setResp<number>)
       .catch(impossible)
       .finally(setLoadingFalse);
   };

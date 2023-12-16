@@ -1,3 +1,7 @@
+export type GoBinds = {
+  GetProcesses: () => Promise<GoApiResponse<Process[]>>;
+  TerminateProcess: (pid: number) => Promise<GoApiResponse<number>>;
+};
 export type GoApiResponse<T> = {
   data: T;
   error: GoApiErr;
