@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 export default function Sidebar() {
+  const navigate = useNavigate();
   return (
     <>
       <button
@@ -33,8 +36,8 @@ export default function Sidebar() {
           <ul className="space-y-2 font-medium">
             <li>
               <a
-                href="/processes"
-                className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                onClick={() => navigate("/processes")}
+                className="group flex cursor-pointer items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
               >
                 <i className="fi fi-rs-it text-xl text-gray-500 group-hover:text-gray-900 dark:text-gray-400"></i>
                 <span className="ms-3">Processes</span>
@@ -42,8 +45,8 @@ export default function Sidebar() {
             </li>
             <li>
               <a
-                href="/"
-                className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                onClick={() => navigate("/")}
+                className="group flex cursor-pointer items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
               >
                 <svg
                   className="h-5 w-5 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
