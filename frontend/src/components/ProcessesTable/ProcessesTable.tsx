@@ -35,6 +35,16 @@ export default function ProcessesTable() {
     setOpenModal(false);
   };
 
+  const fakeAttachDebugger = pid => () => {
+    // attach debugger
+    setAttachedPid(pid);
+  };
+
+  const fakeDetachDebugger = () => {
+    // detach debugger
+    setAttachedPid(-1);
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -79,7 +89,7 @@ export default function ProcessesTable() {
         <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
           <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400 ">
             <tr>
-              {["PID", "Icon", "Name", "Exe", "Architecture", " "].map(item => (
+              {["PID", "", "Name", "Exe", "Architecture", " "].map(item => (
                 <th scope="col" className={`px-4 py-3 ${item === "Name" ? "" : "text-center"}`} key={item}>
                   {item}
                 </th>
@@ -87,7 +97,7 @@ export default function ProcessesTable() {
             </tr>
           </thead>
           <tbody>
-            {processes.map(process => (
+            {processes.map((process: Process) => (
               // striped rows tailwindcss
               <tr
                 className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
@@ -108,15 +118,21 @@ export default function ProcessesTable() {
                 <td className="p-4 py-2 text-center">{process.name}</td>
                 <td className="p-4 py-2">
                   <div className="flex w-full items-center justify-center">
-                    {process.arch === 1 ? <img src="/assets/bit32.svg" /> : <img src="/assets/bit64.svg" />}
+                    {process.arch === 1 ? <img src="/src/assets/bit32.svg" /> : <img src="/src/assets/bit64.svg" />}
                   </div>
                 </td>
                 <td className="min-w-max p-4 py-2">
                   <div className="flex w-max flex-row items-center gap-x-3">
-                    {attachedPid === -1 ? (
-                      <i className="fi fi-br-play-circle cursor-pointer text-xl text-green-600 hover:text-green-700"></i>
+                    {attachedPid !== process.pid ? (
+                      <i
+                        className="fi fi-br-play-circle cursor-pointer text-xl text-green-600 hover:text-green-700"
+                        onClick={fakeAttachDebugger(process.pid)}
+                      ></i>
                     ) : (
-                      <i className="fi fi-br-stop-circle cursor-pointer text-xl text-red-600 hover:text-red-700"></i>
+                      <i
+                        className="fi fi-br-stop-circle cursor-pointer text-xl text-red-600 hover:text-red-700"
+                        onClick={fakeDetachDebugger}
+                      ></i>
                     )}
                     <TooltipThemed content="Kill Process">
                       <i
