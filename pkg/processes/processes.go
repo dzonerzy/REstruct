@@ -8,8 +8,11 @@ import (
 	"image/color"
 	"image/png"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"unsafe"
+
+	"golang.org/x/sync/syncmap"
 )
 
 var (
@@ -33,7 +36,7 @@ var (
 	procTerminateProcess        *syscall.LazyProc
 )
 
-var iconCache = make(map[string]string)
+var iconCache syncmap.Map
 
 func init() {
 	kernel32 := syscall.NewLazyDLL("kernel32.dll")
@@ -337,7 +340,7 @@ func processinfo(pid uint32) (*Process, error) {
 	exePath := syscall.UTF16ToString(filename[:filenameSize])
 	exeName := filepath.Base(exePath)
 
-	if _, ok := iconCache[exePath]; !ok {
+	if _, ok := iconCache.Load(exePath); !ok {
 
 		exeIcon, err := processicon(filename[:filenameSize])
 		if err != nil {
@@ -351,8 +354,14 @@ func processinfo(pid uint32) (*Process, error) {
 			return nil, fmt.Errorf("png.Encode failed")
 		}
 
-		iconCache[exePath] = fmt.Sprintf("data:image/png;base64,%s", base64.StdEncoding.EncodeToString(b.Bytes()))
+		iconCache.Store(exePath, fmt.Sprintf("data:image/png;base64,%s", base64.StdEncoding.EncodeToString(b.Bytes())))
 
+	}
+
+	icon, _ := iconCache.Load(exePath)
+
+	if exeDesc == "" {
+		exeDesc = strings.Replace(exeName, ".exe", "", -1)
 	}
 
 	return &Process{
@@ -360,7 +369,7 @@ func processinfo(pid uint32) (*Process, error) {
 		Exe:  exeName,
 		Desc: exeDesc,
 		Arch: arch,
-		Icon: iconCache[exePath],
+		Icon: icon.(string),
 	}, nil
 }
 

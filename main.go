@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"restruct/pkg/ws"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -13,8 +14,8 @@ var assets embed.FS
 
 func main() {
 	// Start the websocket server
-
-	println("Server started")
+	wsServer := ws.NewWebSocketServer("localhost", 8080)
+	wsServer.Start()
 	// Create an instance of the app structure
 	app := NewApp()
 
