@@ -45,12 +45,12 @@ export default function ProcessesTable() {
 
   const fakeAttachDebugger = pid => () => {
     // attach debugger
-    // const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket("ws://localhost:5000", {
-    //   share: true,
-    //   shouldReconnect: () => true,
-    //   reconnectAttempts: 0,
-    //   reconnectInterval: 3000,
-    // });
+    const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket("ws://localhost:8080", {
+      share: true,
+      shouldReconnect: () => true,
+      reconnectAttempts: 0,
+      reconnectInterval: 3000,
+    });
     setAttachedPid(pid);
   };
 
