@@ -17,6 +17,21 @@ export default function ProcessesTable() {
   const [openModal, setOpenModal] = useState(false);
   const [search, setSearch] = useState("");
   const [searched, setSearched] = useState("");
+  const { sendJsonMessage, lastJsonMessage, readyState, sendMessage } = useWebSocket("ws://localhost:8080", {
+    share: true,
+    shouldReconnect: () => true,
+    reconnectAttempts: 0,
+    reconnectInterval: 3000,
+    onOpen: () => {
+      console.log("websocket opened");
+    },
+    onClose: () => {
+      console.log("websocket closed");
+    },
+    onError: () => {
+      console.log("websocket error");
+    },
+  });
 
   const { GetProcesses } = useGo(setProcesses, setError, setLoading);
   const { TerminateProcess } = useGo(
@@ -45,12 +60,7 @@ export default function ProcessesTable() {
 
   const fakeAttachDebugger = pid => () => {
     // attach debugger
-    const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket("ws://localhost:8080", {
-      share: true,
-      shouldReconnect: () => true,
-      reconnectAttempts: 0,
-      reconnectInterval: 3000,
-    });
+    sendJsonMessage({ pid: pid });
     setAttachedPid(pid);
   };
 
