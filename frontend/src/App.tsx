@@ -1,3 +1,4 @@
+import useWebSocket, { ReadyState } from "react-use-websocket";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import A from "./components/A";
@@ -7,6 +8,16 @@ import Home from "./pages/Home/Home";
 import ProcessesTable from "./components/ProcessesTable/ProcessesTable";
 
 function App() {
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket("ws://localhost:5000", {
+    share: true,
+    shouldReconnect: () => true,
+    reconnectAttempts: 0,
+    reconnectInterval: 3000,
+  });
+
+  console.log("App.tsx");
+  console.log({ readyState, lastJsonMessage, sendJsonMessage });
+
   return (
     <HashRouter basename="/">
       <Routes>
