@@ -59,7 +59,7 @@ func NewWebSocketServer(iface string, port int) *WebSocketServer {
 
 						if err != nil {
 							log.Printf("Error reading message: %s\n", err.Error())
-							continue
+							return
 						}
 
 						var generic GenericMessage
