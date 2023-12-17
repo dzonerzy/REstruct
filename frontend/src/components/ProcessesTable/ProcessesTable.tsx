@@ -13,6 +13,8 @@ export default function ProcessesTable() {
   const [selectedPid, setSelectedPid] = useState<number>(-1);
   const [modalText, setModalText] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const [search, setSearch] = useState("");
+  const [searched, setSearched] = useState("");
 
   const { GetProcesses } = useGo(setProcesses, setError, setLoading);
   const { TerminateProcess } = useGo(
@@ -29,6 +31,10 @@ export default function ProcessesTable() {
   useEffect(() => {
     GetProcesses();
   }, []);
+  useEffect(() => {
+    const timeOutId = setTimeout(() => setSearched(search), 250);
+    return () => clearTimeout(timeOutId);
+  }, [search]);
 
   const onConfirm = () => {
     TerminateProcess(selectedPid);
@@ -44,6 +50,8 @@ export default function ProcessesTable() {
     // detach debugger
     setAttachedPid(-1);
   };
+
+  const setSearchText = e => setSearch(e.target.value);
 
   if (loading) {
     return <Loading />;
@@ -81,6 +89,8 @@ export default function ProcessesTable() {
             id="table-search"
             className="block w-80 rounded-lg border border-gray-300 bg-gray-50 ps-10 pt-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             placeholder="Search for items"
+            onChange={setSearchText}
+            value={search}
           />
         </div>
       </div>
@@ -99,54 +109,58 @@ export default function ProcessesTable() {
           <tbody>
             {processes.map((process: Process) => (
               // striped rows tailwindcss
-              <tr
-                className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
-                key={process.pid}
-              >
-                <th
-                  scope="row"
-                  className="whitespace-nowrap p-4 py-2 text-center font-medium text-gray-900 dark:text-white"
-                >
-                  {process.pid}
-                </th>
-                <td className="p-4 py-2">
-                  <div className="w-8">
-                    <img src={process.icon} />
-                  </div>
-                </td>
-                <td className="p-4 py-2">{process.desc}</td>
-                <td className="p-4 py-2 text-center">{process.name}</td>
-                <td className="p-4 py-2">
-                  <div className="flex w-full items-center justify-center">
-                    {process.arch === 1 ? <img src="/src/assets/bit32.svg" /> : <img src="/src/assets/bit64.svg" />}
-                  </div>
-                </td>
-                <td className="min-w-max p-4 py-2">
-                  <div className="flex w-max flex-row items-center gap-x-3">
-                    {attachedPid !== process.pid ? (
-                      <i
-                        className="fi fi-br-play-circle cursor-pointer text-xl text-green-600 hover:text-green-700"
-                        onClick={fakeAttachDebugger(process.pid)}
-                      ></i>
-                    ) : (
-                      <i
-                        className="fi fi-br-stop-circle cursor-pointer text-xl text-red-600 hover:text-red-700"
-                        onClick={fakeDetachDebugger}
-                      ></i>
-                    )}
-                    <TooltipThemed content="Kill Process">
-                      <i
-                        className="fi fi-sr-trash cursor-pointer text-xl text-amber-600 hover:text-amber-700"
-                        onClick={() => {
-                          setSelectedPid(process.pid);
-                          setModalText(`Are you sure you want to kill pid ${process.pid}?\n(${process.name})`);
-                          setOpenModal(true);
-                        }}
-                      ></i>
-                    </TooltipThemed>
-                  </div>
-                </td>
-              </tr>
+              <>
+                {process.name.toLowerCase().includes(searched.toLowerCase()) && (
+                  <tr
+                    className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+                    key={process.pid}
+                  >
+                    <th
+                      scope="row"
+                      className="whitespace-nowrap p-4 py-2 text-center font-medium text-gray-900 dark:text-white"
+                    >
+                      {process.pid}
+                    </th>
+                    <td className="p-4 py-2">
+                      <div className="w-8">
+                        <img src={process.icon} />
+                      </div>
+                    </td>
+                    <td className="p-4 py-2">{process.desc}</td>
+                    <td className="p-4 py-2 text-center">{process.name}</td>
+                    <td className="p-4 py-2">
+                      <div className="flex w-full items-center justify-center">
+                        {process.arch === 1 ? <img src="/src/assets/bit32.svg" /> : <img src="/src/assets/bit64.svg" />}
+                      </div>
+                    </td>
+                    <td className="min-w-max p-4 py-2">
+                      <div className="flex w-max flex-row items-center gap-x-3">
+                        {attachedPid !== process.pid ? (
+                          <i
+                            className="fi fi-br-play-circle cursor-pointer text-xl text-green-600 hover:text-green-700"
+                            onClick={fakeAttachDebugger(process.pid)}
+                          ></i>
+                        ) : (
+                          <i
+                            className="fi fi-br-stop-circle cursor-pointer text-xl text-red-600 hover:text-red-700"
+                            onClick={fakeDetachDebugger}
+                          ></i>
+                        )}
+                        <TooltipThemed content="Kill Process">
+                          <i
+                            className="fi fi-sr-trash cursor-pointer text-xl text-amber-600 hover:text-amber-700"
+                            onClick={() => {
+                              setSelectedPid(process.pid);
+                              setModalText(`Are you sure you want to kill pid ${process.pid}?\n(${process.name})`);
+                              setOpenModal(true);
+                            }}
+                          ></i>
+                        </TooltipThemed>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </>
             ))}
           </tbody>
         </table>
