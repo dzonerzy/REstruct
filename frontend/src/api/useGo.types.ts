@@ -8,7 +8,7 @@ export type GoApiResponse<T> = {
 };
 export type GoApiErr = null | string;
 
-export type Architecture = 1 | 2;
+export type Architecture = 0 | 1 | 2;
 export type Process = {
   desc: string;
   icon: string;
