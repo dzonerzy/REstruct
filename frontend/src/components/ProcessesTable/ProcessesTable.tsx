@@ -45,12 +45,12 @@ export default function ProcessesTable() {
 
   const fakeAttachDebugger = pid => () => {
     // attach debugger
-    const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket("ws://localhost:5000", {
-      share: true,
-      shouldReconnect: () => true,
-      reconnectAttempts: 0,
-      reconnectInterval: 3000,
-    });
+    // const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket("ws://localhost:5000", {
+    //   share: true,
+    //   shouldReconnect: () => true,
+    //   reconnectAttempts: 0,
+    //   reconnectInterval: 3000,
+    // });
     setAttachedPid(pid);
   };
 
@@ -149,15 +149,19 @@ export default function ProcessesTable() {
                     <td className="min-w-max p-4 py-2">
                       <div className="flex w-max flex-row items-center gap-x-3">
                         {attachedPid !== process.pid ? (
-                          <i
-                            className="fi fi-br-play-circle cursor-pointer text-xl text-green-600 hover:text-green-700"
-                            onClick={fakeAttachDebugger(process.pid)}
-                          ></i>
+                          <TooltipThemed content="Attach Debugger">
+                            <i
+                              className="fi fi-br-play-circle cursor-pointer text-xl text-green-600 hover:text-green-700"
+                              onClick={fakeAttachDebugger(process.pid)}
+                            ></i>
+                          </TooltipThemed>
                         ) : (
-                          <i
-                            className="fi fi-br-stop-circle cursor-pointer text-xl text-red-600 hover:text-red-700"
-                            onClick={fakeDetachDebugger}
-                          ></i>
+                          <TooltipThemed content="Detach Debugger">
+                            <i
+                              className="fi fi-br-stop-circle cursor-pointer text-xl text-red-600 hover:text-red-700"
+                              onClick={fakeDetachDebugger}
+                            ></i>
+                          </TooltipThemed>
                         )}
                         <TooltipThemed content="Kill Process">
                           <i
