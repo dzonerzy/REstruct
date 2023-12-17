@@ -4,6 +4,8 @@ import ModalGuard from "../Wrappers/ModalThemed";
 import TooltipThemed from "../Wrappers/TooltipThemed";
 import type { GoApiErr, Process } from "../../api/useGo.types";
 import Loading from "../Loading/Loading";
+import useWebSocket from "react-use-websocket";
+import ArchIcon from "../ArchIcon/ArchIcon";
 
 export default function ProcessesTable() {
   const [processes, setProcesses] = useState([]);
@@ -32,7 +34,7 @@ export default function ProcessesTable() {
     GetProcesses();
   }, []);
   useEffect(() => {
-    const timeOutId = setTimeout(() => setSearched(search), 250);
+    const timeOutId = setTimeout(() => setSearched(search), 1);
     return () => clearTimeout(timeOutId);
   }, [search]);
 
@@ -43,6 +45,12 @@ export default function ProcessesTable() {
 
   const fakeAttachDebugger = pid => () => {
     // attach debugger
+    const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket("ws://localhost:5000", {
+      share: true,
+      shouldReconnect: () => true,
+      reconnectAttempts: 0,
+      reconnectInterval: 3000,
+    });
     setAttachedPid(pid);
   };
 
@@ -53,6 +61,11 @@ export default function ProcessesTable() {
 
   const setSearchText = e => setSearch(e.target.value);
 
+  const filterSearch = (process: Process) =>
+    process.name.toLowerCase().includes(searched.toLowerCase()) ||
+    process.pid.toString().includes(searched.toLowerCase()) ||
+    process.desc.toLowerCase().includes(searched.toLowerCase());
+
   if (loading) {
     return <Loading />;
   }
@@ -62,7 +75,7 @@ export default function ProcessesTable() {
   ) : (
     <>
       <ModalGuard {...{ text: modalText, openModal, setOpenModal, onConfirm }} />
-      <div className="pb-4">
+      <div className="flex justify-center pb-4">
         <label htmlFor="table-search" className="sr-only">
           Search
         </label>
@@ -95,7 +108,7 @@ export default function ProcessesTable() {
         </div>
       </div>
 
-      <div className="relative w-full overflow-x-auto shadow-md sm:rounded-lg ">
+      <div className="relative w-full overflow-x-auto rounded-lg shadow-md ">
         <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
           <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400 ">
             <tr>
@@ -110,17 +123,17 @@ export default function ProcessesTable() {
             {processes.map((process: Process) => (
               // striped rows tailwindcss
               <>
-                {process.name.toLowerCase().includes(searched.toLowerCase()) && (
+                {filterSearch(process) && (
                   <tr
                     className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
                     key={process.pid}
                   >
-                    <th
+                    <td
                       scope="row"
                       className="whitespace-nowrap p-4 py-2 text-center font-medium text-gray-900 dark:text-white"
                     >
                       {process.pid}
-                    </th>
+                    </td>
                     <td className="p-4 py-2">
                       <div className="w-8">
                         <img src={process.icon} />
@@ -130,7 +143,7 @@ export default function ProcessesTable() {
                     <td className="p-4 py-2 text-center">{process.name}</td>
                     <td className="p-4 py-2">
                       <div className="flex w-full items-center justify-center">
-                        {process.arch === 1 ? <img src="/src/assets/bit32.svg" /> : <img src="/src/assets/bit64.svg" />}
+                        <ArchIcon arch={process.arch} />
                       </div>
                     </td>
                     <td className="min-w-max p-4 py-2">
