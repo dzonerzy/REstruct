@@ -59,15 +59,17 @@ func NewWebSocketServer(iface string, port int) *WebSocketServer {
 
 						if err != nil {
 							log.Printf("Error reading message: %s\n", err.Error())
-							return
+							continue
 						}
 
 						var generic GenericMessage
 						err = json.Unmarshal(msg, &generic)
 						if err != nil {
 							log.Printf("Error unmarshalling message: %s\n", err.Error())
-							return
+							continue
 						}
+
+						log.Printf("Message with command %d received\n", generic.Command)
 
 						switch generic.Command {
 						case COMMAND_ATTACH:
@@ -75,7 +77,7 @@ func NewWebSocketServer(iface string, port int) *WebSocketServer {
 							err = json.Unmarshal(msg, &attach)
 							if err != nil {
 								log.Printf("Error unmarshalling message: %s\n", err.Error())
-								return
+								continue
 							}
 							log.Printf("Attach message received: %d\n", attach.ProcessId)
 						case COMMAND_DETACH:
@@ -83,7 +85,7 @@ func NewWebSocketServer(iface string, port int) *WebSocketServer {
 							err = json.Unmarshal(msg, &detach)
 							if err != nil {
 								log.Printf("Error unmarshalling message: %s\n", err.Error())
-								return
+								continue
 							}
 							log.Printf("Detach message received: %d\n", detach.ProcessId)
 						default:
