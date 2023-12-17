@@ -65,7 +65,7 @@ func NewWebSocketServer(iface string, port int) *WebSocketServer {
 						var generic GenericMessage
 						err = json.Unmarshal(msg, &generic)
 						if err != nil {
-							log.Printf("Error unmarshalling message: %s\n", err.Error())
+							log.Printf("Error unmarshalling message: %s message was: %s\n", err.Error(), string(msg))
 							continue
 						}
 
