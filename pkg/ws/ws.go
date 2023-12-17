@@ -2,6 +2,7 @@ package ws
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
@@ -61,7 +62,33 @@ func NewWebSocketServer(iface string, port int) *WebSocketServer {
 							return
 						}
 
-						log.Printf("Message received: %s\n", string(msg))
+						var generic GenericMessage
+						err = json.Unmarshal(msg, &generic)
+						if err != nil {
+							log.Printf("Error unmarshalling message: %s\n", err.Error())
+							return
+						}
+
+						switch generic.Command {
+						case COMMAND_ATTACH:
+							var attach MessageAttach
+							err = json.Unmarshal(msg, &attach)
+							if err != nil {
+								log.Printf("Error unmarshalling message: %s\n", err.Error())
+								return
+							}
+							log.Printf("Attach message received: %d\n", attach.ProcessId)
+						case COMMAND_DETACH:
+							var detach MessageDetach
+							err = json.Unmarshal(msg, &detach)
+							if err != nil {
+								log.Printf("Error unmarshalling message: %s\n", err.Error())
+								return
+							}
+							log.Printf("Detach message received: %d\n", detach.ProcessId)
+						default:
+							log.Printf("Unknown message received: %s\n", string(msg))
+						}
 					}
 				}
 
