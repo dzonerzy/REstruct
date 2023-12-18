@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { WsContext } from "../../App";
 import useGo from "../../api/useGo";
+import type { GoApiErr, Process } from "../../api/useGo.types";
+import { MessageAttach, MessageDetach } from "../../api/useGoWebSocket.types";
+import ArchIcon from "../ArchIcon/ArchIcon";
+import Loading from "../Loading/Loading";
 import ModalGuard from "../Wrappers/ModalThemed";
 import TooltipThemed from "../Wrappers/TooltipThemed";
-import type { GoApiErr, Process } from "../../api/useGo.types";
-import Loading from "../Loading/Loading";
-import useWebSocket from "react-use-websocket";
-import ArchIcon from "../ArchIcon/ArchIcon";
 
 export default function ProcessesTable() {
   const [processes, setProcesses] = useState([]);
@@ -17,21 +18,7 @@ export default function ProcessesTable() {
   const [openModal, setOpenModal] = useState(false);
   const [search, setSearch] = useState("");
   const [searched, setSearched] = useState("");
-  const { sendJsonMessage, lastJsonMessage, readyState, sendMessage } = useWebSocket("ws://localhost:8080", {
-    share: true,
-    shouldReconnect: () => true,
-    reconnectAttempts: 0,
-    reconnectInterval: 3000,
-    onOpen: () => {
-      console.log("websocket opened");
-    },
-    onClose: () => {
-      console.log("websocket closed");
-    },
-    onError: () => {
-      console.log("websocket error");
-    },
-  });
+  const { sendJsonMessage, lastJsonMessage } = useContext(WsContext);
 
   const { GetProcesses } = useGo(setProcesses, setError, setLoading);
   const { TerminateProcess } = useGo(
@@ -60,12 +47,13 @@ export default function ProcessesTable() {
 
   const fakeAttachDebugger = pid => () => {
     // attach debugger
-    sendJsonMessage({ pid: pid });
+    sendJsonMessage(new MessageAttach(pid));
     setAttachedPid(pid);
   };
 
   const fakeDetachDebugger = () => {
     // detach debugger
+    sendJsonMessage(new MessageDetach(attachedPid));
     setAttachedPid(-1);
   };
 
