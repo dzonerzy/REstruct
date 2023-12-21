@@ -16,6 +16,12 @@ export default function useGoWebSocket() {
     onError: () => {
       console.log("websocket error");
     },
+    onMessage: data => {
+      console.log("websocket data", data);
+    },
+    onReconnectStop(numAttempts) {
+      console.log("websocket reconnect stop", numAttempts);
+    },
   });
 
   const sendJsonMessage = <T extends GenericMessage>(message: T) => {
