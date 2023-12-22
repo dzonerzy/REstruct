@@ -3,24 +3,31 @@ import "./App.css";
 import ProcessesTable from "./components/ProcessesTable/ProcessesTable";
 import Home from "./pages/Home/Home";
 import Layout from "./pages/Layout";
-import useGoWebSocket from "./api/useGoWebSocket";
 import { createContext } from "react";
+import { GlobalCtxProperties } from "./App.types";
+import { useGoWebSocket, useFooterMsg } from "./api";
 
-export const WsContext = createContext<ReturnType<typeof useGoWebSocket> | null>(null);
+export const GlobalCtx = createContext<GlobalCtxProperties>(null);
 
 function App() {
   const ws = useGoWebSocket();
+  const [footerMsg, setFooterMsg] = useFooterMsg("Initializing...");
 
   return (
     <HashRouter basename="/">
-      <WsContext.Provider value={ws}>
+      <GlobalCtx.Provider
+        value={{
+          ws,
+          footer: useFooterMsg("Initializing..."),
+        }}
+      >
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/processes" element={<ProcessesTable />} />
           </Route>
         </Routes>
-      </WsContext.Provider>
+      </GlobalCtx.Provider>
     </HashRouter>
   );
 }
