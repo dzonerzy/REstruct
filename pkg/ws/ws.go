@@ -2,7 +2,6 @@ package ws
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net"
@@ -55,41 +54,16 @@ func NewWebSocketServer(iface string, port int) *WebSocketServer {
 						log.Printf("Context done: %s\n", ctx.Err().Error())
 						return
 					default:
-						_, msg, err := conn.ReadMessage()
+						gm, data, err := decodeMesage(conn)
 
 						if err != nil {
-							log.Printf("Error reading message: %s\n", err.Error())
-							return
-						}
-
-						var generic GenericMessage
-						err = json.Unmarshal(msg, &generic)
-						if err != nil {
-							log.Printf("Error unmarshalling message: %s message was: %s\n", err.Error(), string(msg))
+							log.Printf("Error decoding message: %s\n", err.Error())
 							continue
 						}
 
-						log.Printf("Message with command %d received\n", generic.Command)
-
-						switch generic.Command {
-						case COMMAND_ATTACH:
-							var attach MessageAttach
-							err = json.Unmarshal(msg, &attach)
-							if err != nil {
-								log.Printf("Error unmarshalling message: %s\n", err.Error())
-								continue
-							}
-							log.Printf("Attach message received: %d\n", attach.ProcessId)
-						case COMMAND_DETACH:
-							var detach MessageDetach
-							err = json.Unmarshal(msg, &detach)
-							if err != nil {
-								log.Printf("Error unmarshalling message: %s\n", err.Error())
-								continue
-							}
-							log.Printf("Detach message received: %d\n", detach.ProcessId)
-						default:
-							log.Printf("Unknown message received: %s\n", string(msg))
+						if err = handleMessage(conn, gm, data); err != nil {
+							log.Printf("Error handling message: %s\n", err.Error())
+							continue
 						}
 					}
 				}
