@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { WsContext } from "../../App";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { GlobalCtx } from "../../App";
 import useGo from "../../api/useGo";
 import type { GoApiErr, Process } from "../../api/useGo.types";
 import { MessageAttach, MessageDetach } from "../../api/useGoWebSocket.types";
@@ -7,6 +7,7 @@ import ArchIcon from "../ArchIcon/ArchIcon";
 import Loading from "../Loading/Loading";
 import ModalGuard from "../Wrappers/ModalThemed";
 import TooltipThemed from "../Wrappers/TooltipThemed";
+import { ReadyState } from "react-use-websocket";
 
 export default function ProcessesTable() {
   const [processes, setProcesses] = useState([]);
@@ -18,7 +19,22 @@ export default function ProcessesTable() {
   const [openModal, setOpenModal] = useState(false);
   const [search, setSearch] = useState("");
   const [searched, setSearched] = useState("");
-  const { sendJsonMessage, lastJsonMessage } = useContext(WsContext);
+  const {
+    ws: { sendJsonMessage, lastJsonMessage, readyState },
+    footer: [_, setMsg],
+  } = useContext(GlobalCtx);
+
+  const connectionStatus = useMemo(
+    () =>
+      ({
+        [ReadyState.CONNECTING]: "Connecting",
+        [ReadyState.OPEN]: "Open",
+        [ReadyState.CLOSING]: "Closing",
+        [ReadyState.CLOSED]: "Closed",
+        [ReadyState.UNINSTANTIATED]: "Uninstantiated",
+      })[readyState],
+    [readyState]
+  );
 
   const { GetProcesses } = useGo(setProcesses, setError, setLoading);
   const { TerminateProcess } = useGo(
@@ -34,6 +50,7 @@ export default function ProcessesTable() {
 
   useEffect(() => {
     GetProcesses();
+    setMsg("Processes");
   }, []);
   useEffect(() => {
     const timeOutId = setTimeout(() => setSearched(search), 1);
