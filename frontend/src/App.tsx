@@ -11,7 +11,6 @@ export const GlobalCtx = createContext<GlobalCtxProperties>(null);
 
 function App() {
   const ws = useGoWebSocket();
-  const [footerMsg, setFooterMsg] = useFooterMsg("Initializing...");
 
   return (
     <HashRouter basename="/">
