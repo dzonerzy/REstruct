@@ -9,20 +9,22 @@ export default function SidebarWrapper() {
 
   return (
     <Sidebar className="fixed">
-      <Sidebar.CTA className="mb-2 !bg-slate-900 p-2 text-center font-mono text-xl font-bold text-blue-950">
-        REstruct
-      </Sidebar.CTA>
-      <div className="h-px bg-slate-900/[0.6]" />
-      <Sidebar.Items className="border-none">
-        <Sidebar.ItemGroup>
-          <Sidebar.Item className="cursor-pointer" onClick={goToHome}>
-            Home
-          </Sidebar.Item>
-          <Sidebar.Item className="cursor-pointer" onClick={goToProcesses}>
-            Processes
-          </Sidebar.Item>
-        </Sidebar.ItemGroup>
-      </Sidebar.Items>
+      <div className="pt-2">
+        <Sidebar.CTA className="mb-2 !bg-slate-900 p-2 text-center font-mono text-xl font-bold text-blue-950">
+          REstruct
+        </Sidebar.CTA>
+        <div className="h-px bg-slate-900/[0.6]" />
+        <Sidebar.Items className="border-none">
+          <Sidebar.ItemGroup>
+            <Sidebar.Item className="cursor-pointer" onClick={goToHome}>
+              Home
+            </Sidebar.Item>
+            <Sidebar.Item className="cursor-pointer" onClick={goToProcesses}>
+              Processes
+            </Sidebar.Item>
+          </Sidebar.ItemGroup>
+        </Sidebar.Items>
+      </div>
     </Sidebar>
   );
 }
