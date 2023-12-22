@@ -20,10 +20,6 @@ type GenericMessage struct {
 	Command Command `json:"command"`
 }
 
-func (m *GenericMessage) Encode() ([]byte, error) {
-	return json.Marshal(m)
-}
-
 func (m *GenericMessage) ToMessageAttach(msg []byte) (*MessageAttach, error) {
 	var attach = new(MessageAttach)
 	err := json.Unmarshal(msg, attach)
@@ -58,6 +54,22 @@ type MessageResponse struct {
 	Error any `json:"error"`
 	GenericMessage
 	Success bool `json:"success"`
+}
+
+func (m *GenericMessage) Encode() ([]byte, error) {
+	return json.Marshal(m)
+}
+
+func (m *MessageAttach) Encode() ([]byte, error) {
+	return json.Marshal(m)
+}
+
+func (m *MessageDetach) Encode() ([]byte, error) {
+	return json.Marshal(m)
+}
+
+func (m *MessageResponse) Encode() ([]byte, error) {
+	return json.Marshal(m)
 }
 
 func NewMessageAttach(processId int) Message {
