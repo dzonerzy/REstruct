@@ -1,26 +1,26 @@
 import useWebSocket from "react-use-websocket";
-import { GenericMessage, MessageAttach } from "./useGoWebSocket.types";
+import { GenericMessage, GoWsResponse } from "./useGoWebSocket.types";
 
 export default function useGoWebSocket() {
-  const ws = useWebSocket("ws://localhost:8080", {
+  const ws = useWebSocket<GoWsResponse>("ws://localhost:8080", {
     share: true,
     shouldReconnect: () => true,
     reconnectAttempts: 5,
     reconnectInterval: 3000,
     onOpen: () => {
-      console.log("websocket opened");
+      console.log("websocket onOpen");
     },
     onClose: () => {
-      console.log("websocket closed");
+      console.log("websocket onClose");
     },
     onError: () => {
-      console.log("websocket error");
+      console.log("websocket onError");
     },
     onMessage: data => {
-      console.log("websocket data", data);
+      console.log("websocket onMessage", data);
     },
     onReconnectStop(numAttempts) {
-      console.log("websocket reconnect stop", numAttempts);
+      console.log("websocket onReconnectStop", numAttempts);
     },
   });
 
