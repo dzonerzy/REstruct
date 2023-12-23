@@ -11,13 +11,14 @@ export const GlobalCtx = createContext<GlobalCtxProperties>(null);
 
 function App() {
   const ws = useGoWebSocket();
+  const footer = useFooterMsg("Initializing...");
 
   return (
     <HashRouter basename="/">
       <GlobalCtx.Provider
         value={{
           ws,
-          footer: useFooterMsg("Initializing..."),
+          footer,
         }}
       >
         <Routes>
