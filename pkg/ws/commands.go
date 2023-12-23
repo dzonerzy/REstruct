@@ -2,15 +2,27 @@ package ws
 
 import (
 	"encoding/json"
+	"math/rand"
+	"time"
 )
-
-type Command int
 
 const (
 	COMMAND_ATTACH Command = iota
 	COMMAND_DETACH
 	REPONSE Command = 0x7f
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+type Command int
+
+type MessageId uint16
+
+type MessageIdetifier struct {
+	MessageId MessageId `json:"id"`
+}
 
 type Message interface {
 	Encode() ([]byte, error)
@@ -41,19 +53,21 @@ func (m *GenericMessage) ToMessageDetach(msg []byte) (*MessageDetach, error) {
 }
 
 type MessageAttach struct {
+	MessageIdetifier
 	GenericMessage
 	ProcessId int `json:"processId"`
 }
 
 type MessageDetach struct {
+	MessageIdetifier
 	GenericMessage
 	ProcessId int `json:"processId"`
 }
 
 type MessageResponse struct {
-	Error any `json:"error"`
-	GenericMessage
-	Success bool `json:"success"`
+	Error      any       `json:"error"`
+	ResponseTo MessageId `json:"rId"`
+	Success    bool      `json:"success"`
 }
 
 func (m *GenericMessage) Encode() ([]byte, error) {
@@ -72,8 +86,15 @@ func (m *MessageResponse) Encode() ([]byte, error) {
 	return json.Marshal(m)
 }
 
+func randMessageId() MessageId {
+	return MessageId(rand.Uint32() % 0xffff)
+}
+
 func NewMessageAttach(processId int) Message {
 	return &MessageAttach{
+		MessageIdetifier: MessageIdetifier{
+			MessageId: randMessageId(),
+		},
 		GenericMessage: GenericMessage{
 			Command: COMMAND_ATTACH,
 		},
@@ -83,6 +104,9 @@ func NewMessageAttach(processId int) Message {
 
 func NewMessageDetach(processId int) Message {
 	return &MessageDetach{
+		MessageIdetifier: MessageIdetifier{
+			MessageId: randMessageId(),
+		},
 		GenericMessage: GenericMessage{
 			Command: COMMAND_DETACH,
 		},
@@ -90,12 +114,10 @@ func NewMessageDetach(processId int) Message {
 	}
 }
 
-func NewMessageResponse(success bool, err any) Message {
+func NewMessageResponse(success bool, err any, responseTo MessageId) Message {
 	return &MessageResponse{
-		Error: err,
-		GenericMessage: GenericMessage{
-			Command: REPONSE,
-		},
-		Success: success,
+		Error:      err,
+		ResponseTo: responseTo,
+		Success:    success,
 	}
 }
