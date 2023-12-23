@@ -17,10 +17,16 @@ export default function SidebarWrapper() {
         <Sidebar.Items className="border-none">
           <Sidebar.ItemGroup>
             <Sidebar.Item className="cursor-pointer dark:hover:bg-slate-700" onClick={goToHome}>
-              Home
+              <div className="flex gap-x-2">
+                <i className="fi fi-rr-home pt-[2px]" />
+                <span>Home</span>
+              </div>
             </Sidebar.Item>
             <Sidebar.Item className="cursor-pointer dark:hover:bg-slate-700" onClick={goToProcesses}>
-              Processes
+              <div className="flex gap-x-2">
+                <i className="fi fi-rr-table-list pt-[2px]" />
+                <span>Processes</span>
+              </div>
             </Sidebar.Item>
           </Sidebar.ItemGroup>
         </Sidebar.Items>
