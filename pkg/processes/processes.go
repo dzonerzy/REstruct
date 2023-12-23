@@ -410,3 +410,14 @@ func AttachProcess(pid int) error {
 	AttachedProcessHandle = uintptr(proc)
 	return nil
 }
+
+func DetachProcess(pid int) error {
+	if pid != AttachedProcessId {
+		return fmt.Errorf("process %d is not attached", pid)
+	}
+	// close handle
+	procCloseHandle.Call(AttachedProcessHandle)
+	AttachedProcessId = -1
+	AttachedProcessHandle = uintptr(INVALID_HANDLE_VALUE)
+	return nil
+}
