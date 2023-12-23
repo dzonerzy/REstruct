@@ -11,15 +11,13 @@ export default function Layout() {
   return (
     <div className="flex h-screen w-screen flex-col">
       <div className="flex flex-1 overflow-hidden">
-        <div>
-          <SidebarWrapper />
-        </div>
-        <div className="flex-1 overflow-y-auto bg-[#1b2636]">
-          <MainContent className={"p-2"} />
+        <SidebarWrapper />
+        <div className="flex flex-1 justify-center overflow-y-auto bg-[#1b2636]">
+          <MainContent className={"p-2 "} />
         </div>
       </div>
 
-      <footer className="h-6 w-screen bg-slate-700 pl-4 text-left text-slate-900">{msg}</footer>
+      <footer className="h-6 w-screen bg-slate-700 pl-4 text-left text-slate-300">{msg}</footer>
     </div>
   );
 }
