@@ -16,18 +16,20 @@ func MesssagesHandler(conn *websocket.Conn, message Message) error {
 			return sendResponse(conn, NewMessageResponse(
 				false,
 				fmt.Errorf("error attaching process: %s", err.Error()),
+				msg.MessageId,
 			))
 		}
-		return sendResponse(conn, NewMessageResponse(true, nil))
+		return sendResponse(conn, NewMessageResponse(true, nil, msg.MessageId))
 	case *MessageDetach:
 		log.Printf("Detach message received: %v\n", msg)
 		if err := processes.DetachProcess(msg.ProcessId); err != nil {
 			return sendResponse(conn, NewMessageResponse(
 				false,
 				fmt.Errorf("error detaching process: %s", err.Error()),
+				msg.MessageId,
 			))
 		}
-		return sendResponse(conn, NewMessageResponse(true, nil))
+		return sendResponse(conn, NewMessageResponse(true, nil, msg.MessageId))
 	default:
 		return fmt.Errorf("unknown message type: %T", msg)
 	}
