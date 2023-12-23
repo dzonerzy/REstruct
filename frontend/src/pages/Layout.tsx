@@ -13,7 +13,7 @@ export default function Layout() {
       <div className="flex flex-1 overflow-hidden">
         <SidebarWrapper />
         <div className="flex flex-1 justify-center overflow-y-auto bg-[#1b2636]">
-          <MainContent className={"p-2 "} />
+          <MainContent className={"p-2"} />
         </div>
       </div>
 
