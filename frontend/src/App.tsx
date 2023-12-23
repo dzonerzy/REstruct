@@ -3,7 +3,7 @@ import "./App.css";
 import ProcessesTable from "./components/ProcessesTable/ProcessesTable";
 import Home from "./pages/Home/Home";
 import Layout from "./pages/Layout";
-import { createContext } from "react";
+import { createContext, useState } from "react";
 import { GlobalCtxProperties } from "./App.types";
 import { useGoWebSocket, useFooterMsg } from "./api";
 
@@ -12,6 +12,7 @@ export const GlobalCtx = createContext<GlobalCtxProperties>(null);
 function App() {
   const ws = useGoWebSocket();
   const footer = useFooterMsg("Initializing...");
+  const [attachedPid, setAttachedPid] = useState<number>(-1);
 
   return (
     <HashRouter basename="/">
@@ -19,6 +20,7 @@ function App() {
         value={{
           ws,
           footer,
+          pid: [attachedPid, setAttachedPid],
         }}
       >
         <Routes>

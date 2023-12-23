@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from "react";
+import { ReadyState } from "react-use-websocket";
 import { GlobalCtx } from "../../App";
 import useGo from "../../api/useGo";
 import type { GoApiErr, Process } from "../../api/useGo.types";
@@ -7,13 +8,11 @@ import ArchIcon from "../ArchIcon/ArchIcon";
 import Loading from "../Loading/Loading";
 import ModalGuard from "../Wrappers/ModalThemed";
 import TooltipThemed from "../Wrappers/TooltipThemed";
-import { ReadyState } from "react-use-websocket";
 
 export default function ProcessesTable() {
   const [processes, setProcesses] = useState([]);
   const [error, setError] = useState<GoApiErr>(null);
   const [loading, setLoading] = useState(true);
-  const [attachedPid, setAttachedPid] = useState<number>(-1);
   const [selectedPid, setSelectedPid] = useState<number>(-1);
   const [modalText, setModalText] = useState("");
   const [openModal, setOpenModal] = useState(false);
@@ -24,6 +23,7 @@ export default function ProcessesTable() {
   const {
     ws: { sendJsonMessage, lastJsonMessage, readyState },
     footer: [_, setFooterMsg],
+    pid: [attachedPid, setAttachedPid],
   } = useContext(GlobalCtx);
 
   const connectionStatus = useMemo(
@@ -59,12 +59,8 @@ export default function ProcessesTable() {
     return () => clearTimeout(timeOutId);
   }, [search]);
   useEffect(() => {
-    if (lastJsonMessage?.error) {
-      setError(error);
-    }
-    switch (null) {
-      case 127:
-        break;
+    if (!lastJsonMessage?.success) {
+      setFooterMsg("Ws request failed ...");
     }
   }, [lastJsonMessage]);
 
@@ -74,13 +70,14 @@ export default function ProcessesTable() {
   };
 
   const attachDebugger = pid => () => {
-    setLoadingAttachedDebugger(true);
+    // setLoadingAttachedDebugger(true);
     setFooterMsg(`Attaching debugger to ${pid} ...`);
     sendJsonMessage(new MessageAttach(pid));
     setAttachedPid(pid);
   };
 
   const detachDebugger = () => {
+    // setLoadingAttachedDebugger(true);
     setFooterMsg(`Detaching debugger from ${attachedPid} ...`);
     sendJsonMessage(new MessageDetach(attachedPid));
     setAttachedPid(-1);
@@ -173,8 +170,8 @@ export default function ProcessesTable() {
                     </div>
                   </td>
                   <td className="min-w-max p-4 py-2">
-                    <div className="flex w-max flex-row items-center gap-x-3">
-                      {loadingAttachDebugger ? (
+                    <div className="flex max-h-min w-max flex-row items-center gap-x-3">
+                      {loadingAttachDebugger && attachedPid === process.pid ? (
                         <TooltipThemed content="Trying to attach debugger ...">
                           <Loading />
                         </TooltipThemed>
