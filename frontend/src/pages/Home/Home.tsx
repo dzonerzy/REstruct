@@ -13,8 +13,12 @@ export default function Home() {
 
   return (
     <div className="flex h-full items-center">
-      <span className="text-3xl font-bold text-white">
-        Welcome to <Logo />
+      <span className="flex text-3xl font-bold text-white">
+        Welcome to&nbsp;
+        <span className="flex flex-col">
+          <Logo />
+          <span className="underline-animation" />
+        </span>
       </span>
     </div>
   );
