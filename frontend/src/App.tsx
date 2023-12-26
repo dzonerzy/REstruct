@@ -26,7 +26,8 @@ function App() {
       <GlobalCtx.Provider
         value={{
           ws,
-          footer: useFooterMsg("Initializing..."),
+          footer,
+          pid: [attachedPid, setAttachedPid],
         }}
       >
         <Routes>

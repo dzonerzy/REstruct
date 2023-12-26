@@ -9,19 +9,19 @@ export default function useGoWebSocket(setErrorMsg: Dispatch<SetStateAction<stri
     reconnectAttempts: 5,
     reconnectInterval: 3000,
     onOpen: () => {
-      console.log("websocket opened");
+      console.log("websocket onOpen");
     },
     onClose: () => {
-      console.log("websocket closed");
+      console.log("websocket onClose");
     },
     onError: () => {
-      console.log("websocket error");
+      console.log("websocket onError");
     },
     onMessage: data => {
-      console.log("websocket data", data);
+      console.log("websocket onMessage", data);
     },
     onReconnectStop(numAttempts) {
-      console.log("websocket reconnect stop", numAttempts);
+      console.log("websocket onReconnectStop", numAttempts);
     },
   });
   const [unfulfilledRequests, setUnfulfilledRequests] = useState<GoWsRequest<Command>[]>([]);

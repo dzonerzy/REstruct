@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from "react";
+import { ReadyState } from "react-use-websocket";
 import { GlobalCtx } from "../../App";
 import useGo from "../../api/useGo";
 import type { GoApiErr, Process } from "../../api/useGo.types";
@@ -7,21 +8,22 @@ import ArchIcon from "../ArchIcon/ArchIcon";
 import Loading from "../Loading/Loading";
 import ModalGuard from "../Wrappers/ModalThemed";
 import TooltipThemed from "../Wrappers/TooltipThemed";
-import { ReadyState } from "react-use-websocket";
 
 export default function ProcessesTable() {
   const [processes, setProcesses] = useState([]);
   const [error, setError] = useState<GoApiErr>(null);
   const [loading, setLoading] = useState(true);
-  const [attachedPid, setAttachedPid] = useState<number>(-1);
   const [selectedPid, setSelectedPid] = useState<number>(-1);
   const [modalText, setModalText] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [search, setSearch] = useState("");
   const [searched, setSearched] = useState("");
+  const [loadingAttachDebugger, setLoadingAttachedDebugger] = useState(false);
+
   const {
     ws: { sendJsonMessage, lastJsonMessage, readyState },
-    footer: [_, setMsg],
+    footer: [_, setFooterMsg],
+    pid: [attachedPid, setAttachedPid],
   } = useContext(GlobalCtx);
 
   const connectionStatus = useMemo(
@@ -50,26 +52,33 @@ export default function ProcessesTable() {
 
   useEffect(() => {
     GetProcesses();
-    setMsg("Processes");
+    setFooterMsg("Open Processes");
   }, []);
   useEffect(() => {
-    const timeOutId = setTimeout(() => setSearched(search), 1);
+    const timeOutId = setTimeout(() => setSearched(search), 150);
     return () => clearTimeout(timeOutId);
   }, [search]);
+  useEffect(() => {
+    if (!lastJsonMessage?.success) {
+      setFooterMsg("Ws request failed ...");
+    }
+  }, [lastJsonMessage]);
 
   const onConfirm = () => {
     TerminateProcess(selectedPid);
     setOpenModal(false);
   };
 
-  const fakeAttachDebugger = pid => () => {
-    // attach debugger
+  const attachDebugger = pid => () => {
+    // setLoadingAttachedDebugger(true);
+    setFooterMsg(`Attaching debugger to ${pid} ...`);
     sendJsonMessage(new MessageAttach(pid));
     setAttachedPid(pid);
   };
 
-  const fakeDetachDebugger = () => {
-    // detach debugger
+  const detachDebugger = () => {
+    // setLoadingAttachedDebugger(true);
+    setFooterMsg(`Detaching debugger from ${attachedPid} ...`);
     sendJsonMessage(new MessageDetach(attachedPid));
     setAttachedPid(-1);
   };
@@ -135,65 +144,67 @@ export default function ProcessesTable() {
             </tr>
           </thead>
           <tbody>
-            {processes.map((process: Process) => (
+            {processes.map((process: Process) =>
               // striped rows tailwindcss
-              <>
-                {filterSearch(process) && (
-                  <tr
-                    className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
-                    key={process.pid}
+              filterSearch(process) ? (
+                <tr
+                  className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+                  key={process.pid}
+                >
+                  <td
+                    scope="row"
+                    className="whitespace-nowrap p-4 py-2 text-center font-medium text-gray-900 dark:text-white"
                   >
-                    <td
-                      scope="row"
-                      className="whitespace-nowrap p-4 py-2 text-center font-medium text-gray-900 dark:text-white"
-                    >
-                      {process.pid}
-                    </td>
-                    <td className="p-4 py-2">
-                      <div className="w-8">
-                        <img src={process.icon} />
-                      </div>
-                    </td>
-                    <td className="p-4 py-2">{process.desc}</td>
-                    <td className="p-4 py-2 text-center">{process.name}</td>
-                    <td className="p-4 py-2">
-                      <div className="flex w-full items-center justify-center">
-                        <ArchIcon arch={process.arch} />
-                      </div>
-                    </td>
-                    <td className="min-w-max p-4 py-2">
-                      <div className="flex w-max flex-row items-center gap-x-3">
-                        {attachedPid !== process.pid ? (
-                          <TooltipThemed content="Attach Debugger">
-                            <i
-                              className="fi fi-br-play-circle cursor-pointer text-xl text-green-600 hover:text-green-700"
-                              onClick={fakeAttachDebugger(process.pid)}
-                            ></i>
-                          </TooltipThemed>
-                        ) : (
-                          <TooltipThemed content="Detach Debugger">
-                            <i
-                              className="fi fi-br-stop-circle cursor-pointer text-xl text-red-600 hover:text-red-700"
-                              onClick={fakeDetachDebugger}
-                            ></i>
-                          </TooltipThemed>
-                        )}
-                        <TooltipThemed content="Kill Process">
+                    {process.pid}
+                  </td>
+                  <td className="p-4 py-2">
+                    <div className="w-8">
+                      <img src={process.icon} />
+                    </div>
+                  </td>
+                  <td className="p-4 py-2">{process.desc}</td>
+                  <td className="p-4 py-2 text-center">{process.name}</td>
+                  <td className="p-4 py-2">
+                    <div className="flex w-full items-center justify-center">
+                      <ArchIcon arch={process.arch} />
+                    </div>
+                  </td>
+                  <td className="min-w-max p-4 py-2">
+                    <div className="flex max-h-min w-max flex-row items-center gap-x-3">
+                      {loadingAttachDebugger && attachedPid === process.pid ? (
+                        <TooltipThemed content="Trying to attach debugger ...">
+                          <Loading />
+                        </TooltipThemed>
+                      ) : attachedPid !== process.pid ? (
+                        <TooltipThemed content="Attach Debugger">
                           <i
-                            className="fi fi-sr-trash cursor-pointer text-xl text-amber-600 hover:text-amber-700"
-                            onClick={() => {
-                              setSelectedPid(process.pid);
-                              setModalText(`Are you sure you want to kill pid ${process.pid}?\n(${process.name})`);
-                              setOpenModal(true);
-                            }}
+                            className="fi fi-br-play-circle cursor-pointer text-xl text-green-600 hover:text-green-700"
+                            onClick={attachDebugger(process.pid)}
                           ></i>
                         </TooltipThemed>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </>
-            ))}
+                      ) : (
+                        <TooltipThemed content="Detach Debugger">
+                          <i
+                            className="fi fi-br-stop-circle cursor-pointer text-xl text-red-600 hover:text-red-700"
+                            onClick={detachDebugger}
+                          />
+                        </TooltipThemed>
+                      )}
+                      <TooltipThemed content="Kill Process">
+                        <i
+                          className="fi fi-sr-trash cursor-pointer text-xl text-amber-600 hover:text-amber-700"
+                          onClick={() => {
+                            setSelectedPid(process.pid);
+                            setModalText(`Are you sure you want to kill pid ${process.pid}?\n(${process.name})`);
+                            setOpenModal(true);
+                          }}
+                        ></i>
+                      </TooltipThemed>
+                    </div>
+                  </td>
+                </tr>
+              ) : null
+            )}
           </tbody>
         </table>
       </div>

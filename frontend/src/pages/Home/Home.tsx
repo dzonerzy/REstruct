@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react";
 import { GlobalCtx } from "../../App";
+import Logo from "../../components/Logo/Logo";
 
 export default function Home() {
   const {
@@ -11,10 +12,14 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center">
-      <span>Home</span>
-      <a href="#/b">B</a>
-      <a href="#/processes">Processes</a>
+    <div className="flex h-full items-center">
+      <span className="flex text-3xl font-bold text-white">
+        Welcome to&nbsp;
+        <span className="flex flex-col">
+          <Logo />
+          <span className="underline-animation" />
+        </span>
+      </span>
     </div>
   );
 }

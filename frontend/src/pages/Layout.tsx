@@ -9,10 +9,15 @@ export default function Layout() {
   } = useContext(GlobalCtx);
 
   return (
-    <>
-      <SidebarWrapper />
-      <MainContent />
-      <footer className="fixed bottom-0 h-6 w-screen bg-slate-700 pl-4 text-left text-slate-900">{msg}</footer>
-    </>
+    <div className="flex h-screen w-screen flex-col">
+      <div className="flex flex-1 overflow-hidden">
+        <SidebarWrapper />
+        <div className="flex flex-1 justify-center overflow-y-auto bg-[#1b2636]">
+          <MainContent className={"p-2"} />
+        </div>
+      </div>
+
+      <footer className="h-6 w-screen bg-slate-700 pl-4 text-left text-slate-300">{msg}</footer>
+    </div>
   );
 }
