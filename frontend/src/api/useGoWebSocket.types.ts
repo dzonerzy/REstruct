@@ -1,6 +1,6 @@
 import { getRandomInt } from "../utils/numbers";
 
-enum Command {
+export enum Command {
   ATTACH = 0,
   DETACH = 1,
 }
@@ -12,14 +12,20 @@ export type GoWsResponse = {
   success: boolean;
 };
 
+export type GoWsRequest<T extends Command> = {
+  id: number;
+  command: T;
+  [key: PropertyKey]: any;
+};
+
 export interface GenericMessage {
-  serialize(): object;
+  serialize(): GoWsRequest<Command>;
 }
 
 export class MessageAttach implements GenericMessage {
   constructor(public pid: number) {}
 
-  serialize() {
+  serialize(): GoWsRequest<Command.ATTACH> {
     return { id: getRandomInt(), command: Command.ATTACH, processId: this.pid };
   }
 }
@@ -27,7 +33,7 @@ export class MessageAttach implements GenericMessage {
 export class MessageDetach implements GenericMessage {
   constructor(public pid: number) {}
 
-  serialize() {
+  serialize(): GoWsRequest<Command.DETACH> {
     return { id: getRandomInt(), command: Command.DETACH, processId: this.pid };
   }
 }
