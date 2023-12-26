@@ -34,6 +34,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/processes" element={<ProcessesTable />} />
+            <Route path="/local-types" element={<ProcessesTable />} />
           </Route>
         </Routes>
         <ErrorAlert errorMsg={errorMsg} closeError={closeError} />
