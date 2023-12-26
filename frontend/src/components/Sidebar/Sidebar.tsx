@@ -7,6 +7,7 @@ export default function SidebarWrapper() {
 
   const goToHome = () => navigate("/");
   const goToProcesses = () => navigate("/processes");
+  const goToLocalTypes = () => navigate("/local-types");
 
   return (
     <Sidebar className="">
@@ -27,6 +28,12 @@ export default function SidebarWrapper() {
               <div className="flex gap-x-2">
                 <i className="fi fi-rr-table-list pt-[2px]" />
                 <span>Processes</span>
+              </div>
+            </Sidebar.Item>
+            <Sidebar.Item className="cursor-pointer dark:hover:bg-slate-700" onClick={goToLocalTypes}>
+              <div className="flex gap-x-2">
+                <i className="fi fi-rr-exchange pt-[2px]" />
+                <span>Local Types</span>
               </div>
             </Sidebar.Item>
           </Sidebar.ItemGroup>
