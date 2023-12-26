@@ -1,8 +1,9 @@
+import { Dispatch, SetStateAction, useState } from "react";
 import useWebSocket from "react-use-websocket";
-import { GenericMessage, MessageAttach } from "./useGoWebSocket.types";
+import { Command, GenericMessage, GoWsRequest, GoWsResponse } from "./useGoWebSocket.types";
 
-export default function useGoWebSocket() {
-  const ws = useWebSocket("ws://localhost:8080", {
+export default function useGoWebSocket(setErrorMsg: Dispatch<SetStateAction<string>>) {
+  const ws = useWebSocket<GoWsResponse>("ws://localhost:8080", {
     share: true,
     shouldReconnect: () => true,
     reconnectAttempts: 5,
@@ -23,11 +24,26 @@ export default function useGoWebSocket() {
       console.log("websocket reconnect stop", numAttempts);
     },
   });
+  const [unfulfilledRequests, setUnfulfilledRequests] = useState<GoWsRequest<Command>[]>([]);
+
+  // useEffect(() => {
+  //   console.log("unfulfilledRequests", unfulfilledRequests);
+  // }, [unfulfilledRequests]);
+
+  /** @returns `res.success` value */
+  const handleResponse = (res: GoWsResponse): boolean => {
+    setUnfulfilledRequests(unfulfilledRequests.filter(req => req.id !== res.rId));
+    setErrorMsg(res.error);
+
+    return res.success;
+  };
 
   const sendJsonMessage = <T extends GenericMessage>(message: T) => {
-    ws.sendJsonMessage(message.serialize());
+    const msgSerialized = message.serialize();
+    setUnfulfilledRequests([...unfulfilledRequests, msgSerialized]);
+    ws.sendJsonMessage(msgSerialized);
   };
 
   // lastJsonMessage, readyState, lastMessage, sendMessage, getWebSocket,
-  return { ...ws, sendJsonMessage };
+  return { ...ws, handleResponse, sendJsonMessage };
 }

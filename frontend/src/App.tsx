@@ -3,15 +3,24 @@ import "./App.css";
 import ProcessesTable from "./components/ProcessesTable/ProcessesTable";
 import Home from "./pages/Home/Home";
 import Layout from "./pages/Layout";
-import { createContext } from "react";
+import { createContext, useState } from "react";
 import { GlobalCtxProperties } from "./App.types";
 import { useGoWebSocket, useFooterMsg } from "./api";
+import ModalGuard from "./components/Wrappers/ModalThemed";
+import { Alert } from "flowbite-react";
+import ErrorAlert from "./components/ErrorAlert/ErrorAlert";
 
 export const GlobalCtx = createContext<GlobalCtxProperties>(null);
 
 function App() {
-  const ws = useGoWebSocket();
+  const [attachedPid, setAttachedPid] = useState<number>(-1);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const ws = useGoWebSocket(setErrorMsg);
+  const footer = useFooterMsg("Initializing...");
 
+  const closeError = () => {
+    setErrorMsg("");
+  };
   return (
     <HashRouter basename="/">
       <GlobalCtx.Provider
@@ -26,6 +35,7 @@ function App() {
             <Route path="/processes" element={<ProcessesTable />} />
           </Route>
         </Routes>
+        <ErrorAlert errorMsg={errorMsg} closeError={closeError} />
       </GlobalCtx.Provider>
     </HashRouter>
   );
