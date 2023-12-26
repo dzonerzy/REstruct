@@ -21,7 +21,7 @@ export default function ProcessesTable() {
   const [loadingAttachDebugger, setLoadingAttachedDebugger] = useState(false);
 
   const {
-    ws: { sendJsonMessage, lastJsonMessage, readyState },
+    ws: { sendJsonMessage, lastJsonMessage, readyState, handleResponse },
     footer: [_, setFooterMsg],
     pid: [attachedPid, setAttachedPid],
   } = useContext(GlobalCtx);
@@ -59,9 +59,14 @@ export default function ProcessesTable() {
     return () => clearTimeout(timeOutId);
   }, [search]);
   useEffect(() => {
-    if (!lastJsonMessage?.success) {
-      setFooterMsg("Ws request failed ...");
+    if (!lastJsonMessage) {
+      return;
     }
+    setLoadingAttachedDebugger(false);
+    if (!handleResponse(lastJsonMessage)) {
+      setFooterMsg(prev => `${prev} FAILED`);
+    }
+    setFooterMsg(prev => `${prev} SUCCESS`);
   }, [lastJsonMessage]);
 
   const onConfirm = () => {
@@ -70,14 +75,14 @@ export default function ProcessesTable() {
   };
 
   const attachDebugger = pid => () => {
-    // setLoadingAttachedDebugger(true);
+    setLoadingAttachedDebugger(true);
     setFooterMsg(`Attaching debugger to ${pid} ...`);
     sendJsonMessage(new MessageAttach(pid));
     setAttachedPid(pid);
   };
 
   const detachDebugger = () => {
-    // setLoadingAttachedDebugger(true);
+    setLoadingAttachedDebugger(true);
     setFooterMsg(`Detaching debugger from ${attachedPid} ...`);
     sendJsonMessage(new MessageDetach(attachedPid));
     setAttachedPid(-1);
@@ -172,9 +177,7 @@ export default function ProcessesTable() {
                   <td className="min-w-max p-4 py-2">
                     <div className="flex max-h-min w-max flex-row items-center gap-x-3">
                       {loadingAttachDebugger && attachedPid === process.pid ? (
-                        <TooltipThemed content="Trying to attach debugger ...">
-                          <Loading />
-                        </TooltipThemed>
+                        <i className="fi fi-br-play-circle cursor-pointer text-xl text-green-800 hover:text-green-900"></i>
                       ) : attachedPid !== process.pid ? (
                         <TooltipThemed content="Attach Debugger">
                           <i
