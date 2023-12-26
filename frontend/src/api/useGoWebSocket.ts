@@ -38,6 +38,13 @@ export default function useGoWebSocket(setErrorMsg: Dispatch<SetStateAction<stri
     return res.success;
   };
 
+  /** Wrapper of `sendJsonMessage` from `useWebSocket` hook
+   *
+   * @description It enforced the request to be serializable into a proper request
+   * and adds it into the `unfulfilledRequests` queue, ready to be handled by `handleResponse`
+   *
+   * The `handleResponse` function will remove the request from the queue once the response is received
+   */
   const sendJsonMessage = <T extends GenericMessage>(message: T) => {
     const msgSerialized = message.serialize();
     setUnfulfilledRequests([...unfulfilledRequests, msgSerialized]);
