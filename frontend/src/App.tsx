@@ -9,6 +9,7 @@ import { useGoWebSocket, useFooterMsg } from "./api";
 import ModalGuard from "./components/Wrappers/ModalThemed";
 import { Alert } from "flowbite-react";
 import ErrorAlert from "./components/ErrorAlert/ErrorAlert";
+import MemoryInspector from "./pages/MemoryInspector/MemoryInspector";
 
 export const GlobalCtx = createContext<GlobalCtxProperties>(null);
 
@@ -34,6 +35,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/processes" element={<ProcessesTable />} />
+            <Route path="/memory-inspector" element={<MemoryInspector />} />
           </Route>
         </Routes>
         <ErrorAlert errorMsg={errorMsg} closeError={closeError} />
