@@ -1,3 +1,5 @@
+import LocalTypesTable from "../../components/LocalTypesTable/LocalTypesTable";
+
 export default function LocalTypes() {
-  return <div>LocalTypes</div>;
+  return <LocalTypesTable />;
 }
