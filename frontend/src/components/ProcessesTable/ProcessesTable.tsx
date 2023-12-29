@@ -129,7 +129,7 @@ export default function ProcessesTable() {
           <input
             type="text"
             id="table-search"
-            className="block w-80 rounded-lg border border-gray-300 bg-gray-50 ps-10 pt-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            className="block w-80 rounded-lg border border-gray-300 bg-gray-50 pb-[6px] ps-10 pt-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             placeholder="Search for items"
             onChange={setSearchText}
             value={search}
@@ -138,8 +138,8 @@ export default function ProcessesTable() {
       </div>
 
       <div className="relative w-full overflow-x-auto rounded-lg shadow-md ">
-        <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
-          <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400 ">
+        <table className="w-full table-fixed text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
+          <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               {["PID", "", "Name", "Exe", "Architecture", " "].map(item => (
                 <th scope="col" className={`px-4 py-3 ${item === "Name" ? "" : "text-center"}`} key={item}>
@@ -153,7 +153,7 @@ export default function ProcessesTable() {
               // striped rows tailwindcss
               filterSearch(process) ? (
                 <tr
-                  className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+                  className="border-b bg-white last:border-b-0 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
                   key={process.pid}
                 >
                   <td
