@@ -7,8 +7,8 @@ import { useFooterMsg, useGoWebSocket } from "./api";
 import Home from "./pages/Home/Home";
 import Layout from "./pages/Layout";
 import LocalTypes from "./pages/LocalTypes/LocalTypes";
-import MemoryInspector from "./pages/MemoryInspector/MemoryInspector";
 import Processes from "./pages/Processes/Processes";
+import MemoryScanner from "./pages/MemoryScanner/MemoryScanner";
 
 export const GlobalCtx = createContext<GlobalCtxProperties>(null);
 
@@ -32,7 +32,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/processes" element={<Processes />} />
-            <Route path="/memory-inspector" element={<MemoryInspector />} />
+            <Route path="/memory-scanner" element={<MemoryScanner />} />
             <Route path="/local-types" element={<LocalTypes />} />
           </Route>
         </Routes>

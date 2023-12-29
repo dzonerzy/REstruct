@@ -2,12 +2,12 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../Logo/Logo";
 import SidebarElement from "./SiderbarElement/SidebarElement";
 
-export default function div() {
+export default function Sidebar() {
   const navigate = useNavigate();
 
   const goToHome = () => navigate("/");
   const goToProcesses = () => navigate("/processes");
-  const goToMemoryInspector = () => navigate("/memory-inspector");
+  const goToMemoryScanner = () => navigate("/memory-scanner");
   const goToLocalTypes = () => navigate("/local-types");
 
   return (
@@ -26,9 +26,9 @@ export default function div() {
               onClick={goToProcesses}
             />
             <SidebarElement
-              text="Memory Inspector"
+              text="Memory Scanner"
               iconElement={<i className="fi fi-rr-memory pt-[2px]" />}
-              onClick={goToMemoryInspector}
+              onClick={goToMemoryScanner}
             />
             <SidebarElement
               text="Local Types"

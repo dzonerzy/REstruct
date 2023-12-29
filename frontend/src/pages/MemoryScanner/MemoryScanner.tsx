@@ -1,6 +1,6 @@
 import MemorySearchSettings from "../../components/MemoryInspector/MemorySearchSettings/MemorySearchSettings";
 
-export default function MemoryInspector() {
+export default function MemoryScanner() {
   return (
     <div className="flex h-full w-full flex-1 flex-col">
       <div className="flex gap-1">

@@ -1,8 +1,8 @@
 import MainContent from "../components/MainContent/MainContent";
 import { useContext } from "react";
 import { GlobalCtx } from "../App";
-import SidebarWrapper from "../components/Sidebar/Sidebar";
 import ErrorAlert from "../components/ErrorAlert/ErrorAlert";
+import Sidebar from "../components/Sidebar/Sidebar";
 
 export default function Layout() {
   const {
@@ -15,7 +15,7 @@ export default function Layout() {
   return (
     <div className="flex h-screen w-screen flex-col">
       <div className="flex flex-1 overflow-hidden">
-        <SidebarWrapper />
+        <Sidebar />
         <div className="flex h-full flex-1 justify-center overflow-y-auto bg-[#1b2636]">
           <MainContent className={"w-full p-2"} />
         </div>
