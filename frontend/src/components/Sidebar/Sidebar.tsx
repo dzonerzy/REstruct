@@ -7,6 +7,8 @@ export default function div() {
 
   const goToHome = () => navigate("/");
   const goToProcesses = () => navigate("/processes");
+  const goToLocalTypes = () => navigate("/local-types");
+  const goToMemoryInspector = () => navigate("/memory-inspector");
 
   return (
     <nav className="bg-[#1F2937] p-3">
