@@ -1,0 +1,13 @@
+footer button {
+  /* background-color: hsl(222, 47.4%, 11.2%); */
+  color: rgb(209, 213, 219);
+  border-radius: 1rem;
+  padding: 0.5rem 2rem;
+  border-color: hsla(0, 0%, 70%, 0.7);
+  border-width: 1px;
+  border-style: solid;
+  width: 7rem;
+}
+footer button:hover {
+  background-color: hsla(0, 0%, 70%, 0.125);
+}

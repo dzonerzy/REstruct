@@ -12,7 +12,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex h-full items-center">
+    <div className="flex h-full items-center justify-center">
       <span className="flex text-3xl font-bold text-white">
         Welcome to&nbsp;
         <span className="flex flex-col">

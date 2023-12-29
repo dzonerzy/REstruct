@@ -6,8 +6,8 @@ import type { GoApiErr, Process } from "../../api/useGo.types";
 import { MessageAttach, MessageDetach } from "../../api/useGoWebSocket.types";
 import ArchIcon from "../ArchIcon/ArchIcon";
 import Loading from "../Loading/Loading";
-import ModalGuard from "../Wrappers/ModalThemed";
-import TooltipThemed from "../Wrappers/TooltipThemed";
+import Tippy from "@tippyjs/react";
+import Modal from "../Modal/Modal";
 
 export default function ProcessesTable() {
   const [processes, setProcesses] = useState([]);
@@ -15,6 +15,7 @@ export default function ProcessesTable() {
   const [loading, setLoading] = useState(true);
   const [selectedPid, setSelectedPid] = useState<number>(-1);
   const [modalText, setModalText] = useState("");
+  const [modalTitle, setModalTitle] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [search, setSearch] = useState("");
   const [searched, setSearched] = useState("");
@@ -103,7 +104,7 @@ export default function ProcessesTable() {
     <h1 className="bg-red-600">{error}</h1>
   ) : (
     <>
-      <ModalGuard {...{ text: modalText, openModal, setOpenModal, onConfirm }} />
+      <Modal {...{ type: "warning", text: modalText, openModal, setOpenModal, onConfirm }} />
       <div className="flex justify-center pb-4">
         <label htmlFor="table-search" className="sr-only">
           Search
@@ -129,7 +130,7 @@ export default function ProcessesTable() {
           <input
             type="text"
             id="table-search"
-            className="block w-80 rounded-lg border border-gray-300 bg-gray-50 ps-10 pt-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            className="block w-80 rounded-lg border border-gray-300 bg-gray-50 pb-[6px] ps-10 pt-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             placeholder="Search for items"
             onChange={setSearchText}
             value={search}
@@ -138,8 +139,8 @@ export default function ProcessesTable() {
       </div>
 
       <div className="relative w-full overflow-x-auto rounded-lg shadow-md ">
-        <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
-          <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400 ">
+        <table className="w-full table-fixed text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
+          <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               {["PID", "", "Name", "Exe", "Architecture", " "].map(item => (
                 <th scope="col" className={`px-4 py-3 ${item === "Name" ? "" : "text-center"}`} key={item}>
@@ -153,7 +154,7 @@ export default function ProcessesTable() {
               // striped rows tailwindcss
               filterSearch(process) ? (
                 <tr
-                  className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+                  className="border-b bg-white last:border-b-0 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
                   key={process.pid}
                 >
                   <td
@@ -179,30 +180,31 @@ export default function ProcessesTable() {
                       {loadingAttachDebugger && attachedPid === process.pid ? (
                         <i className="fi fi-br-play-circle cursor-pointer text-xl text-green-800 hover:text-green-900"></i>
                       ) : attachedPid !== process.pid ? (
-                        <TooltipThemed content="Attach Debugger">
+                        <Tippy content="Attach Debugger">
                           <i
                             className="fi fi-br-play-circle cursor-pointer text-xl text-green-600 hover:text-green-700"
                             onClick={attachDebugger(process.pid)}
                           ></i>
-                        </TooltipThemed>
+                        </Tippy>
                       ) : (
-                        <TooltipThemed content="Detach Debugger">
+                        <Tippy content="Detach Debugger">
                           <i
                             className="fi fi-br-stop-circle cursor-pointer text-xl text-red-600 hover:text-red-700"
                             onClick={detachDebugger}
                           />
-                        </TooltipThemed>
+                        </Tippy>
                       )}
-                      <TooltipThemed content="Kill Process">
+                      <Tippy content="Kill Process">
                         <i
                           className="fi fi-sr-trash cursor-pointer text-xl text-amber-600 hover:text-amber-700"
                           onClick={() => {
                             setSelectedPid(process.pid);
                             setModalText(`Are you sure you want to kill pid ${process.pid}?\n(${process.name})`);
+                            setModalTitle(`Kill process ${process.name}`);
                             setOpenModal(true);
                           }}
                         ></i>
-                      </TooltipThemed>
+                      </Tippy>
                     </div>
                   </td>
                 </tr>

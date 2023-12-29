@@ -1,14 +1,14 @@
+import { createContext, useState } from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
+import "tippy.js/dist/tippy.css";
 import "./App.css";
-import ProcessesTable from "./components/ProcessesTable/ProcessesTable";
+import { GlobalCtxProperties } from "./App.types";
+import { useFooterMsg, useGoWebSocket } from "./api";
 import Home from "./pages/Home/Home";
 import Layout from "./pages/Layout";
-import { createContext, useState } from "react";
-import { GlobalCtxProperties } from "./App.types";
-import { useGoWebSocket, useFooterMsg } from "./api";
-import ModalGuard from "./components/Wrappers/ModalThemed";
-import { Alert } from "flowbite-react";
-import ErrorAlert from "./components/ErrorAlert/ErrorAlert";
+import LocalTypes from "./pages/LocalTypes/LocalTypes";
+import Processes from "./pages/Processes/Processes";
+import MemoryScanner from "./pages/MemoryScanner/MemoryScanner";
 
 export const GlobalCtx = createContext<GlobalCtxProperties>(null);
 
@@ -18,9 +18,6 @@ function App() {
   const ws = useGoWebSocket(setErrorMsg);
   const footer = useFooterMsg("Initializing...");
 
-  const closeError = () => {
-    setErrorMsg("");
-  };
   return (
     <HashRouter basename="/">
       <GlobalCtx.Provider
@@ -28,15 +25,17 @@ function App() {
           ws,
           footer,
           pid: [attachedPid, setAttachedPid],
+          errorAlert: [errorMsg, setErrorMsg],
         }}
       >
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
-            <Route path="/processes" element={<ProcessesTable />} />
+            <Route path="/processes" element={<Processes />} />
+            <Route path="/memory-scanner" element={<MemoryScanner />} />
+            <Route path="/local-types" element={<LocalTypes />} />
           </Route>
         </Routes>
-        <ErrorAlert errorMsg={errorMsg} closeError={closeError} />
       </GlobalCtx.Provider>
     </HashRouter>
   );

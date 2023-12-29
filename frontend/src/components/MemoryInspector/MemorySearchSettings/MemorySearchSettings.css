@@ -1,0 +1,13 @@
+.memory-search-settings {
+  font-size: 0.88rem;
+}
+.memory-search-settings button {
+  background-color: #3f3f3f;
+  border: 1px solid #7f7f7f;
+  text-wrap: nowrap;
+  cursor: initial;
+  padding: 0px 10px;
+}
+.memory-search-settings button:active {
+  opacity: 50%;
+}
