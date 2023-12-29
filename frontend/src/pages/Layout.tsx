@@ -12,8 +12,8 @@ export default function Layout() {
     <div className="flex h-screen w-screen flex-col">
       <div className="flex flex-1 overflow-hidden">
         <SidebarWrapper />
-        <div className="flex flex-1 justify-center overflow-y-auto bg-[#1b2636]">
-          <MainContent className={"p-2"} />
+        <div className="flex h-full flex-1 justify-center overflow-y-auto bg-[#1b2636]">
+          <MainContent className={"w-full p-2"} />
         </div>
       </div>
 
