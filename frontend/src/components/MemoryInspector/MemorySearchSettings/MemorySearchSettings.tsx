@@ -4,7 +4,7 @@ import MemoryValueInput from "./MemoryValueInput/MemoryValueInput";
 
 export default function MemorySearchSettings() {
   return (
-    <search className="memory-search-settings flex flex-col gap-y-4 px-4 dark:text-white">
+    <search className="memory-search-settings flex min-w-[409px] max-w-[409px] flex-col gap-y-4 border-[1px] p-1 px-4 dark:text-white">
       <div className="flex gap-4">
         <button className="btn-primary">First Scan</button>
         <button>Next Scan</button>
