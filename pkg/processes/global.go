@@ -1,10 +1,12 @@
 package processes
 
+import "syscall"
+
 var (
-	AttachedProcessId     int     = -1
-	AttachedProcessHandle uintptr = uintptr(INVALID_HANDLE_VALUE)
+	AttachedProcessId     int            = -1
+	AttachedProcessHandle syscall.Handle = syscall.Handle(INVALID_HANDLE_VALUE)
 )
 
 func isAttached() bool {
-	return AttachedProcessId != -1 && AttachedProcessHandle != uintptr(INVALID_HANDLE_VALUE)
+	return AttachedProcessId != -1 && AttachedProcessHandle != syscall.Handle(INVALID_HANDLE_VALUE)
 }
